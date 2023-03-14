@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  redmine:
+    image: redmine:5.0.5-bullseye
+    restart: always
+    ports:
+      - $REDMINE_PORT:3000
+    environment:
+      REDMINE_DB_POSTGRES: redmine-db
+      REDMINE_DB_DATABASE: $DATABASE_NAME
+      REDMINE_DB_USERNAME: $DATABASE_USER
+      REDMINE_DB_PASSWORD: $DATABASE_PASSWORD
+      REDMINE_SECRET_KEY_BASE: $REDMINE_SECRET_KEY_BASE
+      REDMINE_DB_PORT: $REDMINE_DB_PORT
+    volumes:
+      - $REDMINE_VOLUMES:/usr/src/redmine/files
+
+  redmine-db:
+    image: postgres:15.2-bullseye
+    restart: always
+    ports:
+      - $REDMINE_DB_PORT:$REDMINE_DB_PORT
+    command: -p $REDMINE_DB_PORT
+    environment:
+      POSTGRES_DB: $DATABASE_NAME
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+    volumes:
+      - $REDMINE_DB_VOLUMES:/var/lib/postgresql/data
+
